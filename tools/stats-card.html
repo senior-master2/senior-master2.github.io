@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's Your Stats? — Algotred</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1B1033;
+    --bg-deep: #120A22;
+    --card: #251440;
+    --card-border: #3A2260;
+    --text: #FFF8E7;
+    --text-dim: #B8A9D9;
+    --pink: #FF6B9D;
+    --green: #4ADE80;
+    --gold: #FFD166;
+    --blue: #6FC3FF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: radial-gradient(circle at 20% 0%, #2A1750 0%, var(--bg) 45%, var(--bg-deep) 100%);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 60px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  .display { font-family: 'Fredoka', sans-serif; }
+  .mono { font-family: 'Space Grotesk', sans-serif; }
+
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* ---------- Header ---------- */
+  .brand {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-dim);
+    margin-bottom: 28px;
+    letter-spacing: 0.02em;
+  }
+  .brand span { color: var(--green); }
+
+  .intro { text-align: center; max-width: 340px; margin-bottom: 28px; }
+
+  .intro h1 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .intro p { font-size: 14px; color: var(--text-dim); }
+
+  /* ---------- Input ---------- */
+  .input-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 340px;
+    margin-bottom: 28px;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 15px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+  }
+
+  input[type="text"]::placeholder { color: var(--text-dim); }
+
+  .roll-btn {
+    background: var(--pink);
+    color: #2A0F1F;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 22px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .roll-btn:hover { background: #FF85AF; transform: translateY(-1px); }
+  .roll-btn:active { transform: scale(0.97); }
+
+  /* ---------- Card ---------- */
+  .card {
+    width: 100%;
+    max-width: 340px;
+    background: linear-gradient(155deg, var(--card) 0%, #1E0F38 100%);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 28px 24px 24px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.02);
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .card.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+  .card-name {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .card-sub {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 22px;
+  }
+
+  .stat-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .stat-emoji {
+    font-size: 20px;
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .stat-body { flex: 1; min-width: 0; }
+
+  .stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .stat-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .stat-track {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .stat-fill {
+    height: 100%;
+    border-radius: 20px;
+    width: 0%;
+    transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .card-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--card-border);
+    text-align: center;
+  }
+
+  .card-tag {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+  }
+
+  .card-brand {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    letter-spacing: 0.06em;
+  }
+
+  /* ---------- Actions ---------- */
+  .actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 340px;
+    margin-top: 18px;
+    opacity: 0;
+    transition: opacity 0.4s ease 0.2s;
+  }
+
+  .actions.visible { opacity: 1; }
+
+  .action-btn {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .action-btn:hover { border-color: var(--pink); background: #2E1850; }
+
+  .share-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 340px;
+    margin-top: 18px;
+    opacity: 0;
+    transition: opacity 0.4s ease 0.15s;
+  }
+
+  .share-row.visible { opacity: 1; }
+
+  .share-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+
+  .share-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
+  .share-btn:active { transform: scale(0.97); }
+
+  .share-wa { background: #25D366; color: #08210F; }
+  .share-fb { background: #1877F2; color: #FFF8E7; }
+
+  .hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 14px;
+    max-width: 300px;
+    opacity: 0;
+    transition: opacity 0.4s ease 0.3s;
+  }
+  .hint.visible { opacity: 1; }
+</style>
+</head>
+<body>
+
+  <div class="brand">🔶️<span>ALGOTRED</span></div>
+
+  <div class="intro">
+    <h1>What's Your Stats? 🎲</h1>
+    <p>Type any name and roll a random stat card. Same name always gives the same result.</p>
+  </div>
+
+  <div class="input-row">
+    <input type="text" id="nameInput" placeholder="Enter a name..." maxlength="24" autocomplete="off">
+    <button class="roll-btn display" id="rollBtn">Roll ✨</button>
+  </div>
+
+  <div class="card" id="card">
+    <div class="card-name" id="cardName">—</div>
+    <div class="card-sub">STAT CARD</div>
+    <div id="statsContainer"></div>
+    <div class="card-footer">
+      <div class="card-tag" id="cardTag">—</div>
+      <div class="card-brand">generated on algotred</div>
+    </div>
+  </div>
+
+  <div class="share-row" id="shareRow">
+    <button class="share-btn share-wa" id="waBtn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.1c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.17-4.94-4.36-.15-.2-1.18-1.57-1.18-3 0-1.42.75-2.12 1.01-2.41.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.65.5.24.58.82 2 .89 2.14.07.15.12.32.02.51-.09.2-.14.32-.28.49-.14.17-.29.38-.42.51-.14.14-.28.29-.12.57.16.28.71 1.17 1.52 1.9 1.05.94 1.93 1.23 2.21 1.37.28.14.44.12.6-.07.17-.19.71-.83.9-1.11.19-.28.38-.24.64-.14.26.09 1.67.79 1.96.93.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+      WhatsApp
+    </button>
+    <button class="share-btn share-fb" id="fbBtn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94z"/></svg>
+      Facebook
+    </button>
+  </div>
+
+  <div class="actions" id="actions">
+    <button class="action-btn" id="copyBtn">📋 Copy as text</button>
+    <button class="action-btn" id="rerollBtn">🔄 Roll again</button>
+  </div>
+
+  <div class="hint" id="hint">Tip: try your friends' names and compare results</div>
+
+<script>
+  // ---------- Seeded RNG (mulberry32, seeded from string hash) ----------
+  function hashString(str) {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) {
+      h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+      h = (h << 13) | (h >>> 19);
+    }
+    return () => {
+      h = Math.imul(h ^ (h >>> 16), 2246822519);
+      h = Math.imul(h ^ (h >>> 13), 3266489917);
+      h = (h ^= h >>> 16) >>> 0;
+      return h;
+    };
+  }
+
+  function mulberry32(seed) {
+    let a = seed;
+    return function() {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function seededRandom(name, salt) {
+    const gen = hashString(name.toLowerCase().trim() + '::' + salt);
+    const seed = gen();
+    return mulberry32(seed);
+  }
+
+  // ---------- Stat pool ----------
+  const STAT_POOL = [
+    { key: 'anger', label: 'Anger', emoji: '😤', color: '#FF6B9D', unit: '%' },
+    { key: 'happy', label: 'Happiness', emoji: '😄', color: '#FFD166', unit: '%' },
+    { key: 'iq', label: 'IQ', emoji: '🧠', color: '#6FC3FF', unit: '', min: 70, max: 200 },
+    { key: 'luck', label: 'Luck', emoji: '🍀', color: '#4ADE80', unit: '%' },
+    { key: 'charm', label: 'Charm', emoji: '✨', color: '#FF6B9D', unit: '%' },
+    { key: 'sleep', label: 'Sleep Quality', emoji: '😴', color: '#6FC3FF', unit: '%' },
+    { key: 'drip', label: 'Drip', emoji: '🕶️', color: '#FFD166', unit: '%' },
+    { key: 'chaos', label: 'Chaos Energy', emoji: '🌀', color: '#FF6B9D', unit: '%' },
+    { key: 'wisdom', label: 'Wisdom', emoji: '🦉', color: '#6FC3FF', unit: '%' },
+    { key: 'loyalty', label: 'Loyalty', emoji: '🤝', color: '#4ADE80', unit: '%' },
+    { key: 'rizz', label: 'Rizz', emoji: '😏', color: '#FF6B9D', unit: '%' },
+    { key: 'stubborn', label: 'Stubbornness', emoji: '🐐', color: '#FFD166', unit: '%' },
+    { key: 'foodie', label: 'Foodie Level', emoji: '🍲', color: '#4ADE80', unit: '%' },
+    { key: 'drama', label: 'Drama Meter', emoji: '🎭', color: '#FF6B9D', unit: '%' },
+    { key: 'focus', label: 'Focus', emoji: '🎯', color: '#6FC3FF', unit: '%' },
+    { key: 'vibes', label: 'Overall Vibes', emoji: '🌈', color: '#4ADE80', unit: '%' },
+    { key: 'clout', label: 'Clout', emoji: '📸', color: '#FFD166', unit: '%' },
+    { key: 'gossip', label: 'Gossip Radar', emoji: '👀', color: '#FF6B9D', unit: '%' },
+    { key: 'texting', label: 'Texting Speed', emoji: '⚡', color: '#6FC3FF', unit: '%' },
+    { key: 'main_character', label: 'Main Character Energy', emoji: '🎬', color: '#FFD166', unit: '%' },
+    { key: 'petty', label: 'Petty Level', emoji: '💅', color: '#FF6B9D', unit: '%' },
+    { key: 'reliability', label: 'Reliability', emoji: '⏰', color: '#4ADE80', unit: '%' },
+    { key: 'dance', label: 'Dance Skills', emoji: '💃', color: '#FFD166', unit: '%' },
+    { key: 'streak', label: 'Streak Keeper', emoji: '🔥', color: '#FF6B9D', unit: '%' },
+    { key: 'aura', label: 'Aura', emoji: '🪬', color: '#6FC3FF', unit: '', min: 1, max: 999 },
+  ];
+
+  const TAGS = [
+    "Certified Main Character 🎬",
+    "Unbothered & Thriving 🌟",
+    "Certified Legend 🏆",
+    "Walking Green Flag 🚩",
+    "Chaotic but Loved 💫",
+    "Elite Tier Human 👑",
+    "Certified Vibe Curator 🎧",
+    "Built Different 🔥",
+  ];
+
+  const NUM_STATS = 5;
+
+  function generate(name) {
+    const statRand = seededRandom(name, 'select');
+    const shuffled = [...STAT_POOL].sort(() => statRand() - 0.5);
+    const chosen = shuffled.slice(0, NUM_STATS);
+
+    const results = chosen.map(stat => {
+      const rand = seededRandom(name, stat.key);
+      let value;
+      if (stat.min !== undefined) {
+        value = Math.floor(stat.min + rand() * (stat.max - stat.min));
+      } else {
+        value = Math.floor(20 + rand() * 80); // 20-100%, avoids sad low rolls
+      }
+      return { ...stat, value };
+    });
+
+    const tagRand = seededRandom(name, 'tag');
+    const tag = TAGS[Math.floor(tagRand() * TAGS.length)];
+
+    return { results, tag };
+  }
+
+  function render(name) {
+    const clean = name.trim() || 'Anonymous';
+    const { results, tag } = generate(clean);
+
+    document.getElementById('cardName').textContent = clean;
+    document.getElementById('cardTag').textContent = tag;
+
+    const container = document.getElementById('statsContainer');
+    container.innerHTML = '';
+
+    results.forEach((stat, i) => {
+      const row = document.createElement('div');
+      row.className = 'stat-row';
+      const displayValue = stat.unit === '%' ? `${stat.value}%` : stat.value;
+      row.innerHTML = `
+        <div class="stat-emoji">${stat.emoji}</div>
+        <div class="stat-body">
+          <div class="stat-top">
+            <span class="stat-label">${stat.label}</span>
+            <span class="stat-value mono" style="color:${stat.color}">${displayValue}</span>
+          </div>
+          <div class="stat-track">
+            <div class="stat-fill" style="background:${stat.color}" data-target="${stat.unit === '%' ? stat.value : (stat.value / stat.max) * 100}"></div>
+          </div>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+
+    const card = document.getElementById('card');
+    const actions = document.getElementById('actions');
+    const shareRow = document.getElementById('shareRow');
+    const hint = document.getElementById('hint');
+
+    card.classList.remove('visible');
+    actions.classList.remove('visible');
+    shareRow.classList.remove('visible');
+    hint.classList.remove('visible');
+
+    // force reflow then animate in
+    void card.offsetWidth;
+
+    requestAnimationFrame(() => {
+      card.classList.add('visible');
+      actions.classList.add('visible');
+      shareRow.classList.add('visible');
+      hint.classList.add('visible');
+
+      setTimeout(() => {
+        document.querySelectorAll('.stat-fill').forEach(el => {
+          el.style.width = el.getAttribute('data-target') + '%';
+        });
+      }, 150);
+    });
+
+    return { clean, results, tag };
+  }
+
+  let lastResult = null;
+
+  function doRoll() {
+    const input = document.getElementById('nameInput');
+    const name = input.value || 'Anonymous';
+    lastResult = render(name);
+  }
+
+  document.getElementById('rollBtn').addEventListener('click', doRoll);
+  document.getElementById('rerollBtn').addEventListener('click', doRoll);
+
+  document.getElementById('nameInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') doRoll();
+  });
+
+  const TOOL_URL = 'https://algotred.github.io/tools/stats-card.html';
+
+  function buildShareText(result) {
+    const lines = result.results.map(s => {
+      const val = s.unit === '%' ? `${s.value}%` : s.value;
+      return `${s.emoji} ${s.label}: ${val}`;
+    });
+    return `${result.clean}'s Stat Card 🎲\n\n${lines.join('\n')}\n\n${result.tag}\n\n👉 Check yours: ${TOOL_URL}`;
+  }
+
+  document.getElementById('waBtn').addEventListener('click', () => {
+    if (!lastResult) return;
+    const text = buildShareText(lastResult);
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  });
+
+  document.getElementById('fbBtn').addEventListener('click', () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(TOOL_URL)}`, '_blank', 'width=600,height=520');
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    if (!lastResult) return;
+    const text = buildShareText(lastResult);
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      const original = btn.textContent;
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => { btn.textContent = original; }, 1500);
+    });
+  });
+
+  // Initial roll on load with placeholder name
+  render('Anonymous');
+</script>
+
+</body>
+</html>
