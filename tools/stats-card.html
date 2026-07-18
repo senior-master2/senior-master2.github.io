@@ -630,12 +630,27 @@
 
   const TOOL_URL = 'https://algotred.github.io/tools/stats-card.html';
 
-  function buildShareText(result) {
+  function buildFullText(result) {
+    // Full version for copy/paste — no character limit here, emoji safe to use.
     const lines = result.results.map(s => {
       const val = s.unit === '%' ? `${s.value}%` : s.value;
       return `${s.emoji} ${s.label}: ${val}`;
     });
     return `${result.clean}'s Stat Card 🎲\n\n${lines.join('\n')}\n\n${result.tag}\n\n👉 Check yours: ${TOOL_URL}`;
+  }
+
+  function buildShareText(result) {
+    // WhatsApp Status caps at 700 characters and 10 lines — keep this tight.
+    // Emoji generally render fine in Status (confirmed working), but if a
+    // specific stat emoji shows as "?" for some users, swap that one emoji
+    // in STAT_POOL rather than removing emoji from this function entirely.
+    const lines = result.results
+      .slice(0, 4) // keep only top 4 stats to fit line budget
+      .map(s => {
+        const val = s.unit === '%' ? `${s.value}%` : s.value;
+        return `${s.emoji} ${s.label}: ${val}`;
+      });
+    return `${result.clean}'s Stat Card\n${lines.join('\n')}\n${result.tag}\nCheck yours: ${TOOL_URL}`;
   }
 
   document.getElementById('waBtn').addEventListener('click', () => {
@@ -650,7 +665,7 @@
 
   document.getElementById('copyBtn').addEventListener('click', () => {
     if (!lastResult) return;
-    const text = buildShareText(lastResult);
+    const text = buildFullText(lastResult);
     navigator.clipboard.writeText(text).then(() => {
       const btn = document.getElementById('copyBtn');
       const original = btn.textContent;
@@ -665,4 +680,3 @@
 
 </body>
 </html>
-
