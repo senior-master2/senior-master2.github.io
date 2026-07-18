@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+<url><loc>https://algotred.github.io/</loc></url>
+
+<url><loc>https://algotred.github.io/projects/index.html</loc></url>
+<url><loc>https://algotred.github.io/projects/position-sizer.html</loc></url>
+
+<url><loc>https://algotred.github.io/tools/index.html</loc></url>
+<url><loc>https://algotred.github.io/tools/stats-card.html</loc></url>
+
+<url><loc>https://algotred.github.io/collections/crypto.html</loc></url>
+<url><loc>https://algotred.github.io/collections/health.html</loc></url>
+<url><loc>https://algotred.github.io/collections/education.html</loc></url>
+<url><loc>https://algotred.github.io/collections/ai.html</loc></url>
+<url><loc>https://algotred.github.io/collections/productivity.html</loc></url>
+<url><loc>https://algotred.github.io/collections/automation.html</loc></url>
+<url><loc>https://algotred.github.io/collections/utilities.html</loc></url>
+<url><loc>https://algotred.github.io/collections/custom.html</loc></url>
+
+<url><loc>https://algotred.github.io/articles/crypto/introduction.html</loc></url>
+<url><loc>https://algotred.github.io/articles/health/introduction.html</loc></url>
+<url><loc>https://algotred.github.io/articles/education/introduction.html</loc></url>
+<url><loc>https://algotred.github.io/articles/ai/introduction.html</loc></url>
+<url><loc>https://algotred.github.io/articles/productivity/introduction.html</loc></url>
+<url><loc>https://algotred.github.io/articles/automation/introduction.html</loc></url>
+<url><loc>https://algotred.github.io/articles/utilities/introduction.html</loc></url>
+
+</urlset>
